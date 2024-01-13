@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Lost Cities card game score calculator</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="A score calculator for the card game Lost Cities">
+		<link rel="shortcut icon" href="/images/favicon.ico">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap" rel="stylesheet">
+		<!-- Global site tag (gtag.js) - Google Analytics -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-2533848-6"></script>
+		<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+			gtag('config', 'UA-2533848-6');
+		</script>
+		<!-- End Google Analytics -->
+		<style>
+			:root {
+				--main-color: #444B53;
+			}
+			* { font-family: 'Open Sans', sans-serif; font-weight: 600; color: var(--main-color); box-sizing: border-box; }
+			body { background-color: #F6F6F6; margin: 0; padding: 40px 0; position: relative; }
+			.wrap { max-width: 400px; padding: 0 20px; margin: 0 auto; }
+			.hide { text-indent: -99em; position: absolute; left: -9999px; width: 0; height: 0; }
+			.visually-hidden { visibility: hidden; }
+			.rows {padding: 0;}
+			.group-label { font-size: 16px; margin: 0; padding: 5px 10px; background-color: #DDD; }
+			.row-label { font-size: 15px; width: 120px; margin: 13px 0; }
+			.no-margin-top { margin-top: 0; }
+			.counter, .initials, .score, .total-score { font-size: 32px; }
+			h1, .rows label { text-indent: -99em; position: absolute; width: 0; height: 0; }
+			button { background: none; width: 40px; height: 40px; font-size: 24px; border: none; cursor: pointer; line-height: 38px; }
+			.row { display: flex; flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+			.row.end { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--main-color); }
+			.spaced-bottom { margin-bottom: 20px; }
+			.counter, .initials { display: flex; flex-direction: row; align-items: center; justify-content: space-between; }
+			.initials { margin: 0 40px; }
+			.counter { width: 120px; }
+			.counter input[type="checkbox"] { margin: 0 auto; }
+			.initials input[type="text"] { text-transform: uppercase; }
+			input[type="number"], input[type="text"] { display: block; width: 40px; height: 40px; line-height: 38px; padding: 0; border: 1px solid #333; text-align: center; -moz-appearance: textfield; font-size: 18px; }
+			.input { position: relative; }
+			input[type="number"]::-webkit-outer-spin-button,input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+			.total-scores { cursor: pointer; display: flex; flex-direction: row; align-items: center; justify-content: space-between; }
+			.total-scores .row-label {visibility: hidden;}
+			.total-score { width: 120px; text-align: center;}
+			label { -webkit-tap-highlight-color: rgba(0,0,0,0); }
+			input[disabled] { background-color: #DDD; border-color: #DDD; }
+			.feedback { margin: 40px 0 0; text-align: center; font-size: 14px; }
+			.feedback a { color: #999; }
+			.button { all: revert; border-radius: 4px; background: #FFF; color: var(--main-color); font-size: 16px; border: 1px solid var(--main-color); cursor: pointer; line-height: 18px; padding: 16px; width: 100%; }
+			.reset{ margin-top: 30px; }
+		</style>
+	</head>
+
+	<body>
+		<div class="wrap">
+		<h1>Lost Cities score calculator</h1>
+
+		<div class="player-multi">
+			<h2 class="group-label hide">Player initials</h2>
+			<ul class="rows no-margin-top">
+				<li class="row">
+					<div class="row-label">Player</div>
+					<div class="initials player-1">
+						<label for="player-1-initials">Player 1 initials</label>
+						<input id="player-1-initials" type="text" value="" maxlength="2">
+					</div>
+					<div class="initials player-2">
+						<label for="player-2-initials">Player 2 initials</label>
+						<input id="player-2-initials" type="text" value="" maxlength="2">
+					</div>
+				</li>
+			</ul>
+		</div>
+		<h2 class="group-label" style="background-color: #FFEFC7">Desert (yellow)</h2>
+		<ul class="rows">
+			<li class="row js-row">
+				<h3 class="row-label">Wagers</h3>
+				<div class="counter player-1">
+					<label for="player-1-wagers-yellow">Player 1</label>
+					<button class="js-decrement" data-row="1" data-player="1" tabindex="-1">&ndash;</button>
+					<input id="player-1-wagers-yellow" type="number" min="0" class="js-score js-wagers" data-row="1" data-player="1" data-route="1" value="0">
+					<button class="js-increment" data-row="1" data-player="1" tabindex="-1">+</button>
+				</div>
+				<div class="counter player-2">
+					<label for="player-2-wagers-yellow">Player 2</label>
+					<button class="js-decrement" data-row="1" data-player="2" tabindex="-1">&ndash;</button>
+					<input id="player-2-wagers-yellow" type="number" min="0" class="js-score js-wagers" data-row="1" data-player="2" data-route="1" value="0">
+					<button class="js-increment" data-row="1" data-player="2" tabindex="-1">+</button>
+				</div>
+			</li>
+			<li class="row js-row">
+				<h3 class="row-label">Sum</h3>
+				<div class="counter player-1">
+					<label for="player-1-sum-yellow">Player 1</label>
+					<button class="js-decrement" data-row="2" data-player="1" tabindex="-1">&ndash;</button>
+					<input id="player-1-sum-yellow" type="number" min="0" class="js-score js-sum" data-row="2" data-player="1" data-route="1" value="0">
+					<button class="js-increment" data-row="2" data-player="1" tabindex="-1">+</button>
+				</div>
+				<div class="counter player-2">
+					<label for="player-2-sum-yellow">Player 2</label>
+					<button class="js-decrement" data-row="2" data-player="2" tabindex="-1">&ndash;</button>
+					<input id="player-2-sum-yellow" type="number" min="0" class="js-score js-sum" data-row="2" data-player="2" data-route="1" value="0">
+					<button class="js-increment" data-row="2" data-player="2" tabindex="-1">+</button>
+				</div>
+			</li>
+			<li class="row js-row">
+				<h3 class="row-label">8 cards?</h3>
+				<div class="counter player-1">
+					<label for="player-1-bonus-yellow">Player 1</label>
+					<input id="player-1-bonus-yellow" type="checkbox" class="js-bonus" data-row="3" data-player="1" data-route="1">
+				</div>
+				<div class="counter player-2">
+					<label for="player-2-bonus-yellow">Player 2</label>
+					<input id="player-2-bonus-yellow" type="checkbox" class="js-bonus" data-row="3" data-player="2" data-route="1">
+				</div>
+			</li>
+		</ul>
+		<div class="total-scores spaced-bottom">
+			<h3 class="row-label">Yellow totals</h3>
+			<div class="total-score player-1 js-subtotal-player-1" data-route="1">0</div>
+			<div class="total-score player-2 js-subtotal-player-2" data-route="1">0</div>
+		</div>
+		<h2 class="group-label" style="background-color: white">Mountain (white)</h2>
+		<ul class="rows">
+			<li class="row js-row">
+				<h3 class="row-label">Wagers</h3>
+				<div class="counter player-1">
+					<label for="player-1-wagers-white">Player 1</label>
+					<button class="js-decrement" data-row="4" data-player="1" tabindex="-1">&ndash;</button>
+					<input id="player-1-wagers-white" type="number" min="0" class="js-score js-wagers" data-row="4" data-player="1" data-route="2" value="0">
+					<button class="js-increment" data-row="4" data-player="1" tabindex="-1">+</button>
+				</div>
+				<div class="counter player-2">
+					<label for="player-2-wagers-white">Player 2</label>
+					<button class="js-decrement" data-row="4" data-player="2" tabindex="-1">&ndash;</button>
+					<input id="player-2-wagers-white" type="number" min="0" class="js-score js-wagers" data-row="4" data-player="2" data-route="2" value="0">
+					<button class="js-increment" data-row="4" data-player="2" tabindex="-1">+</button>
+				</div>
+			</li>
+			<li class="row js-row">
+				<h3 class="row-label">Sum</h3>
+				<div class="counter player-1">
+					<label for="player-1-sum-white">Player 1</label>
+					<button class="js-decrement" data-row="5" data-player="1" tabindex="-1">&ndash;</button>
+					<input id="player-1-sum-white" type="number" min="0" class="js-score js-sum" data-row="5" data-player="1" data-route="2" value="0">
+					<button class="js-increment" data-row="5" data-player="1" tabindex="-1">+</button>
+				</div>
+				<div class="counter player-2">
+					<label for="player-2-sum-white">Player 2</label>
+					<button class="js-decrement" data-row="5" data-player="2" tabindex="-1">&ndash;</button>
+					<input id="player-2-sum-white" type="number" min="0" class="js-score js-sum" data-row="5" data-player="2" data-route="2" value="0">
+					<button class="js-increment" data-row="5" data-player="2" tabindex="-1">+</button>
+				</div>
+			</li>
+			<li class="row js-row">
+				<h3 class="row-label">8 cards?</h3>
+				<div class="counter player-1">
+					<label for="player-1-bonus-white">Player 1</label>
+					<input id="player-1-bonus-white" type="checkbox" class="js-bonus" data-row="6" data-player="1" data-route="2">
+				</div>
+				<div class="counter player-2">
+					<label for="player-2-bonus-white">Player 2</label>
+					<input id="player-2-bonus-white" type="checkbox" class="js-bonus" data-row="6" data-player="2" data-route="2">
+				</div>
+			</li>
+		</ul>
+		<div class="total-scores spaced-bottom">
+			<h3 class="row-label">White totals</h3>
+			<div class="total-score player-1 js-subtotal-player-1" data-route="2">0</div>
+			<div class="total-score player-2 js-subtotal-player-2" data-route="2">0</div>
+		</div>
+		<h2 class="group-label" style="background-color: #C7E1FF">Sea (blue)</h2>
+		<ul class="rows">
+			<li class="row js-row">
+				<h3 class="row-label">Wagers</h3>
+				<div class="counter player-1">
+					<label for="player-1-wagers-blue">Player 1</label>
+					<button class="js-decrement" data-row="7" data-player="1" tabindex="-1">&ndash;</button>
+					<input id="player-1-wagers-blue" type="number" min="0" class="js-score js-wagers" data-row="7" data-player="1" data-route="3" value="0">
+					<button class="js-increment" data-row="7" data-player="1" tabindex="-1">+</button>
+				</div>
+				<div class="counter player-2">
+					<label for="player-2-wagers-blue">Player 2</label>
+					<button class="js-decrement" data-row="7" data-player="2" tabindex="-1">&ndash;</button>
+					<input id="player-2-wagers-blue" type="number" min="0" class="js-score js-wagers" data-row="7" data-player="2" data-route="3" value="0">
+					<button class="js-increment" data-row="7" data-player="2" tabindex="-1">+</button>
+				</div>
+			</li>
+			<li class="row js-row">
+				<h3 class="row-label">Sum</h3>
+				<div class="counter player-1">
+					<label for="player-1-sum-blue">Player 1</label>
+					<button class="js-decrement" data-row="8" data-player="1" tabindex="-1">&ndash;</button>
+					<input id="player-1-sum-blue" type="number" min="0" class="js-score js-sum" data-row="8" data-player="1" data-route="3" value="0">
+					<button class="js-increment" data-row="8" data-player="1" tabindex="-1">+</button>
+				</div>
+				<div class="counter player-2">
+					<label for="player-2-sum-blue">Player 2</label>
+					<button class="js-decrement" data-row="8" data-player="2" tabindex="-1">&ndash;</button>
+					<input id="player-2-sum-blue" type="number" min="0" class="js-score js-sum" data-row="8" data-player="2" data-route="3" value="0">
+					<button class="js-increment" data-row="8" data-player="2" tabindex="-1">+</button>
+				</div>
+			</li>
+			<li class="row js-row">
+				<h3 class="row-label">8 cards?</h3>
+				<div class="counter player-1">
+					<label for="player-1-bonus-blue">Player 1</label>
+					<input id="player-1-bonus-blue" type="checkbox" class="js-bonus" data-row="9" data-player="1" data-route="3">
+				</div>
+				<div class="counter player-2">
+					<label for="player-2-bonus-blue">Player 2</label>
+					<input id="player-2-bonus-blue" type="checkbox" class="js-bonus" data-row="9" data-player="2" data-route="3">
+				</div>
+			</li>
+		</ul>
+		<div class="total-scores spaced-bottom">
+			<h3 class="row-label">Blue totals</h3>
+			<div class="total-score player-1 js-subtotal-player-1" data-route="3">0</div>
+			<div class="total-score player-2 js-subtotal-player-2" data-route="3">0</div>
+		</div>
+		<h2 class="group-label" style="background-color: #D2FFC7">Rainforest (green)</h2>
+		<ul class="rows">
+			<li class="row js-row">
+				<h3 class="row-label">Wagers</h3>
+				<div class="counter player-1">
+					<label for="player-1-wagers-green">Player 1</label>
+					<button class="js-decrement" data-row="10" data-player="1" tabindex="-1">&ndash;</button>
+					<input id="player-1-wagers-green" type="number" min="0" class="js-score js-wagers" data-row="10" data-player="1" data-route="4" value="0">
+					<button class="js-increment" data-row="10" data-player="1" tabindex="-1">+</button>
+				</div>
+				<div class="counter player-2">
+					<label for="player-2-wagers-green">Player 2</label>
+					<button class="js-decrement" data-row="10" data-player="2" tabindex="-1">&ndash;</button>
+					<input id="player-2-wagers-green" type="number" min="0" class="js-score js-wagers" data-row="10" data-player="2" data-route="4" value="0">
+					<button class="js-increment" data-row="10" data-player="2" tabindex="-1">+</button>
+				</div>
+			</li>
+			<li class="row js-row">
+				<h3 class="row-label">Sum</h3>
+				<div class="counter player-1">
+					<label for="player-1-sum-green">Player 1</label>
+					<button class="js-decrement" data-row="11" data-player="1" tabindex="-1">&ndash;</button>
+					<input id="player-1-sum-green" type="number" min="0" class="js-score js-sum" data-row="11" data-player="1" data-route="4" value="0">
+					<button class="js-increment" data-row="11" data-player="1" tabindex="-1">+</button>
+				</div>
+				<div class="counter player-2">
+					<label for="player-2-sum-green">Player 2</label>
+					<button class="js-decrement" data-row="11" data-player="2" tabindex="-1">&ndash;</button>
+					<input id="player-2-sum-green" type="number" min="0" class="js-score js-sum" data-row="11" data-player="2" data-route="4" value="0">
+					<button class="js-increment" data-row="11" data-player="2" tabindex="-1">+</button>
+				</div>
+			</li>
+			<li class="row js-row">
+				<h3 class="row-label">8 cards?</h3>
+				<div class="counter player-1">
+					<label for="player-1-bonus-green">Player 1</label>
+					<input id="player-1-bonus-green" type="checkbox" class="js-bonus" data-row="12" data-player="1" data-route="4">
+				</div>
+				<div class="counter player-2">
+					<label for="player-2-bonus-green">Player 2</label>
+					<input id="player-2-bonus-green" type="checkbox" class="js-bonus" data-row="12" data-player="2" data-route="4">
+				</div>
+			</li>
+		</ul>
+		<div class="total-scores spaced-bottom">
+			<h3 class="row-label">Green totals</h3>
+			<div class="total-score player-1 js-subtotal-player-1" data-route="4">0</div>
+			<div class="total-score player-2 js-subtotal-player-2" data-route="4">0</div>
+		</div>
+		<h2 class="group-label" style="background-color: #FFC7C7">Volcano (red)</h2>
+		<ul class="rows">
+			<li class="row js-row">
+				<h3 class="row-label">Wagers</h3>
+				<div class="counter player-1">
+					<label for="player-1-wagers-red">Player 1</label>
+					<button class="js-decrement" data-row="13" data-player="1" tabindex="-1">&ndash;</button>
+					<input id="player-1-wagers-red" type="number" min="0" class="js-score js-wagers" data-row="13" data-player="1" data-route="5" value="0">
+					<button class="js-increment" data-row="13" data-player="1" tabindex="-1">+</button>
+				</div>
+				<div class="counter player-2">
+					<label for="player-2-wagers-red">Player 2</label>
+					<button class="js-decrement" data-row="13" data-player="2" tabindex="-1">&ndash;</button>
+					<input id="player-2-wagers-red" type="number" min="0" class="js-score js-wagers" data-row="13" data-player="2" data-route="5" value="0">
+					<button class="js-increment" data-row="13" data-player="2" tabindex="-1">+</button>
+				</div>
+			</li>
+			<li class="row js-row">
+				<h3 class="row-label">Sum</h3>
+				<div class="counter player-1">
+					<label for="player-1-sum-red">Player 1</label>
+					<button class="js-decrement" data-row="14" data-player="1" tabindex="-1">&ndash;</button>
+					<input id="player-1-sum-red" type="number" min="0" class="js-score js-sum" data-row="14" data-player="1" data-route="5" value="0">
+					<button class="js-increment" data-row="14" data-player="1" tabindex="-1">+</button>
+				</div>
+				<div class="counter player-2">
+					<label for="player-2-sum-red">Player 2</label>
+					<button class="js-decrement" data-row="14" data-player="2" tabindex="-1">&ndash;</button>
+					<input id="player-2-sum-red" type="number" min="0" class="js-score js-sum" data-row="14" data-player="2" data-route="5" value="0">
+					<button class="js-increment" data-row="14" data-player="2" tabindex="-1">+</button>
+				</div>
+			</li>
+			<li class="row js-row">
+				<h3 class="row-label">8 cards?</h3>
+				<div class="counter player-1">
+					<label for="player-1-bonus-red">Player 1</label>
+					<input id="player-1-bonus-red" type="checkbox" class="js-bonus" data-row="15" data-player="1" data-route="5">
+				</div>
+				<div class="counter player-2">
+					<label for="player-2-bonus-red">Player 2</label>
+					<input id="player-2-bonus-red" type="checkbox" class="js-bonus" data-row="15" data-player="2" data-route="5">
+				</div>
+			</li>
+		</ul>
+		<div class="total-scores spaced-bottom">
+			<h3 class="row-label">Red totals</h3>
+			<div class="total-score player-1 js-subtotal-player-1" data-route="5">0</div>
+			<div class="total-score player-2 js-subtotal-player-2" data-route="5">0</div>
+		</div>
+		<h2 class="group-label" style="background-color: #DCC7FF">Alien (purple)</h2>
+		<ul class="rows">
+			<li class="row js-row">
+				<h3 class="row-label">Wagers</h3>
+				<div class="counter player-1">
+					<label for="player-1-wagers-purple">Player 1</label>
+					<button class="js-decrement" data-row="16" data-player="1" tabindex="-1">&ndash;</button>
+					<input id="player-1-wagers-purple" type="number" min="0" class="js-score js-wagers" data-row="16" data-player="1" data-route="6" value="0">
+					<button class="js-increment" data-row="16" data-player="1" tabindex="-1">+</button>
+				</div>
+				<div class="counter player-2">
+					<label for="player-2-wagers-purple">Player 2</label>
+					<button class="js-decrement" data-row="16" data-player="2" tabindex="-1">&ndash;</button>
+					<input id="player-2-wagers-purple" type="number" min="0" class="js-score js-wagers" data-row="16" data-player="2" data-route="6" value="0">
+					<button class="js-increment" data-row="16" data-player="2" tabindex="-1">+</button>
+				</div>
+			</li>
+			<li class="row js-row">
+				<h3 class="row-label">Sum</h3>
+				<div class="counter player-1">
+					<label for="player-1-sum-purple">Player 1</label>
+					<button class="js-decrement" data-row="17" data-player="1" tabindex="-1">&ndash;</button>
+					<input id="player-1-sum-purple" type="number" min="0" class="js-score js-sum" data-row="17" data-player="1" data-route="6" value="0">
+					<button class="js-increment" data-row="17" data-player="1" tabindex="-1">+</button>
+				</div>
+				<div class="counter player-2">
+					<label for="player-2-sum-purple">Player 2</label>
+					<button class="js-decrement" data-row="17" data-player="2" tabindex="-1">&ndash;</button>
+					<input id="player-2-sum-purple" type="number" min="0" class="js-score js-sum" data-row="17" data-player="2" data-route="6" value="0">
+					<button class="js-increment" data-row="17" data-player="2" tabindex="-1">+</button>
+				</div>
+			</li>
+			<li class="row js-row">
+				<h3 class="row-label">8 cards?</h3>
+				<div class="counter player-1">
+					<label for="player-1-bonus-purple">Player 1</label>
+					<input id="player-1-bonus-purple" type="checkbox" class="js-bonus" data-row="18" data-player="1" data-route="6">
+				</div>
+				<div class="counter player-2">
+					<label for="player-2-bonus-purple">Player 2</label>
+					<input id="player-2-bonus-purple" type="checkbox" class="js-bonus" data-row="18" data-player="2" data-route="6">
+				</div>
+			</li>
+		</ul>
+		<div class="total-scores spaced-bottom">
+			<h3 class="row-label">Purple totals</h3>
+			<div class="total-score player-1 js-subtotal-player-1" data-route="6">0</div>
+			<div class="total-score player-2 js-subtotal-player-2" data-route="6">0</div>
+		</div>
+		<h2 class="group-label spaced-bottom">Total points</h2>
+		<div class="total-scores js-total-scores">
+			<div class="row-label"></div>
+			<div class="total-score player-1 js-total-score-player-1">0</div>
+			<div class="total-score player-2 js-total-score-player-2">0</div>
+		</div>
+		<button class="button reset js-reset">Reset scores</button>
+		<p class="feedback"><a href="https://ronansprake.co.uk/board-game-score-calculators#contact" target="_blank">Could this be better? Send me feedback</a></p>
+		</div>
+
+		<script>
+			const body = document.querySelector("body");
+
+			const elemScores = document.querySelectorAll(".js-score");
+			const elemBonuses = document.querySelectorAll(".js-bonus");
+
+			let elemSubtotals = new Array();
+			let elemTotalScore = new Array();
+
+			for (let i = 0; i < 2; i++) {
+				elemSubtotals[i] = document.querySelectorAll(".js-subtotal-player-" + i);
+				elemTotalScore[i] = document.querySelector(".js-total-score-player-" + i);
+			}
+
+			const elemIncrements = document.querySelectorAll('.js-increment');
+			const elemDecrements = document.querySelectorAll('.js-decrement');
+
+			document.oncontextmenu = function() {
+				return false;
+			}
+
+			elemScores.forEach((elemScore) => {
+				elemScore.addEventListener('change', (e) => {
+					if (!elemScore.value) {
+						elemScore.value = 0;
+					}
+					if (elemScore.classList.contains('js-wagers') && elemScore.value > 3) {
+						elemScore.value = 3;
+					}
+					calculateRoutes();
+				});
+				elemScore.addEventListener('focus', (e) => {
+				elemScore.select();
+					e.preventDefault();
+					e.stopPropagation();
+					return false;
+				});
+				elemScore.addEventListener('contextmenu', (e) => {
+					e.preventDefault();
+				});
+			});
+
+			elemBonuses.forEach((elemBonus) => {
+				elemBonus.addEventListener('change', (e) => {
+					calculateRoutes();
+				});
+			});
+
+			// Update a score
+			function updateRowScore(row, player, direction) {
+				var scoreInput = document.querySelector(".js-score[data-row='" + row + "'][data-player='" + player + "']");
+				if (!scoreInput.disabled) {
+					if (direction == 'decrement' && scoreInput.value > 0) {
+						scoreInput.value = parseInt(scoreInput.value) - 1
+					}
+					if (direction == 'increment') {
+						scoreInput.value = parseInt(scoreInput.value) + 1
+					}
+				}
+				scoreInput.dispatchEvent(new Event('change'));
+				updateTotalScore();
+			}
+
+			// Increment score
+			elemIncrements.forEach((elemIncrement) => {
+				elemIncrement.addEventListener('click', (e) => {
+				updateRowScore(elemIncrement.dataset.row, elemIncrement.dataset.player, 'increment');
+				});
+			});
+
+			// Decrement score
+			elemDecrements.forEach((elemDecrement) => {
+				elemDecrement.addEventListener('click', (e) => {
+				updateRowScore(elemDecrement.dataset.row, elemDecrement.dataset.player, 'decrement');
+				});
+			});
+
+			// Calculate a route subtotal
+			function calculateRoutes() {
+				for (let i = 1; i < 3; i++) {
+					for (let j = 1; j < 7; j++) {
+						var tally = 0;
+						var player = i;
+						var route = j;
+						var wagers = document.querySelector(".js-wagers[data-player='" + player + "'][data-route='" + route + "']");
+						var sum = document.querySelector(".js-sum[data-player='" + player + "'][data-route='" + route + "']");
+						var sumTally = sum.value;
+						var bonus = document.querySelector(".js-bonus[data-player='" + player + "'][data-route='" + route + "']");
+						var subtotal = document.querySelector(".js-subtotal-player-" + player + "[data-route='" + route + "']");
+
+						if (wagers.value + sumTally > 0) {
+							sumTally -= 20;
+						}
+
+						if (wagers.value > 0) {
+							sumTally = parseInt(sumTally * (parseInt(wagers.value) + 1));
+						}
+
+						tally += parseInt(sumTally);
+
+						if (bonus.checked) {
+							tally += 20;
+						}
+
+						subtotal.innerHTML = tally;
+					}
+				}
+				updateTotalScore();
+			}
+
+			// Update the total scores with all subtotals
+			function updateTotalScore() {
+				for (let i = 1; i < 7; i++) {
+					var subtotals = elemSubtotals[i];
+					var tally = 0;
+
+					if (subtotals) {
+						subtotals.forEach((subtotal) => {
+							tally += parseInt(subtotal.innerHTML);
+						});
+					elemTotalScore[i].innerHTML = tally;
+					}
+				}
+			}
+
+			// Reset all scores
+			document.querySelector('.js-reset').addEventListener('click', (e) => {
+				var result = window.confirm('Reset your score?');
+				if (result == true) {
+					// Reset scores
+					elemScores.forEach((elemScore) => {
+						elemScore.value = 0;
+					});
+					elemBonuses.forEach((elemBonus) => {
+						elemBonus.checked = false;
+					});
+					calculateRoutes();
+					updateTotalScore();
+				}
+				e.stopPropagation();
+			});
+		</script>
+	</body>
+</html>
