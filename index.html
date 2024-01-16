@@ -388,11 +388,11 @@
 			const elemBonuses = document.querySelectorAll(".js-bonus");
 
 			let elemSubtotals = new Array();
-			let elemTotalScore = new Array();
+			let elemTotalScores = new Array();
 
 			for (let i = 1; i < 3; i++) {
-				elemSubtotals[i] = document.querySelectorAll(".js-subtotal-player-" + i);
-				elemTotalScores[i] = document.querySelectorAll(".js-total-score-player-" + i);
+				elemSubtotals.push(document.querySelectorAll(".js-subtotal-player-" + i));
+				elemTotalScores[i] = document.querySelector(".js-total-score-player-" + i);
 			}
 
 			const elemIncrements = document.querySelectorAll('.js-increment');
@@ -495,14 +495,13 @@
 			function updateTotalScore() {
 				for (let i = 1; i < 3; i++) {
 					var tally = 0;
-					for (let j = 1; j < 7; j++) {
-						var subtotals = elemSubtotals[j];
-						if (subtotals) {
-							subtotals.forEach((subtotal) => {
-								tally += parseInt(subtotal.innerHTML);
-							});
-						}
+					if (elemSubtotals[i - 1]) {
+						elemSubtotals[i - 1].forEach((subtotal) => {
+							window.console.log(subtotal.innerHTML);
+							tally += parseInt(subtotal.innerHTML);
+						});
 					}
+					
 					elemTotalScores[i].innerHTML = tally;
 				}
 			}
