@@ -493,15 +493,17 @@
 
 			// Update the total scores with all subtotals
 			function updateTotalScore() {
-				for (let i = 1; i < 7; i++) {
-					var subtotals = elemSubtotals[i];
-					var tally = 0;
+				for (let i = 1; i < 3; i++) {
+					for (let j = 1; j < 7; j++) {
+						var subtotals = elemSubtotals[j];
+						var tally = 0;
 
-					if (subtotals) {
-						subtotals.forEach((subtotal) => {
-							tally += parseInt(subtotal.innerHTML);
-						});
-					elemTotalScore[i].innerHTML = tally;
+						if (subtotals) {
+							subtotals.forEach((subtotal) => {
+								tally += parseInt(subtotal.innerHTML);
+							});
+							elemTotalScore[i].innerHTML = tally;
+						}
 					}
 				}
 			}
