@@ -392,7 +392,7 @@
 
 			for (let i = 0; i < 2; i++) {
 				elemSubtotals[i] = document.querySelectorAll(".js-subtotal-player-" + i);
-				elemTotalScore[i] = document.querySelector(".js-total-score-player-" + i);
+				elemTotalScores[i] = document.querySelectorAll(".js-total-score-player-" + i);
 			}
 
 			const elemIncrements = document.querySelectorAll('.js-increment');
@@ -502,7 +502,7 @@
 							subtotals.forEach((subtotal) => {
 								tally += parseInt(subtotal.innerHTML);
 							});
-							elemTotalScore[i].innerHTML = tally;
+							elemTotalScores[i].innerHTML = tally;
 						}
 					}
 				}
